@@ -26,6 +26,7 @@ final class DownloadService: ObservableObject {
         let timestamp: Date
     }
     private var progressHistory: [UUID: [ProgressSample]] = [:]
+    private var taskOutput: [UUID: String] = [:]
 
     private let versionPattern = /^[0-9]+\.[0-9]+(\.[0-9]+)?$/
 
@@ -120,17 +121,19 @@ final class DownloadService: ObservableObject {
         process.executableURL = URL(fileURLWithPath: "/usr/sbin/softwareupdate")
         process.arguments = ["--fetch-full-installer", "--full-installer-version", version]
 
-        let stdoutPipe = Pipe()
-        let stderrPipe = Pipe()
-        process.standardOutput = stdoutPipe
-        process.standardError = stderrPipe
+        // Merge stdout + stderr into one pipe — softwareupdate writes progress to stderr
+        let outputPipe = Pipe()
+        process.standardOutput = outputPipe
+        process.standardError  = outputPipe
 
         activeProcesses[id] = process
+        taskOutput[id] = ""
 
         do {
             try process.run()
         } catch {
             activeProcesses.removeValue(forKey: id)
+            taskOutput.removeValue(forKey: id)
             updateState(id, .failed(error: error.localizedDescription))
             logError("Process launch failed: \(error.localizedDescription)", category: "DownloadService")
             return
@@ -138,13 +141,15 @@ final class DownloadService: ObservableObject {
 
         logInfo("Download process started (pid \(process.processIdentifier))", category: "DownloadService")
 
-        let stdoutHandle = stdoutPipe.fileHandleForReading
-        stdoutHandle.readabilityHandler = { [weak self] handle in
+        let outputHandle = outputPipe.fileHandleForReading
+        outputHandle.readabilityHandler = { [weak self] handle in
             let data = handle.availableData
             guard !data.isEmpty else { return }
             let text = String(data: data, encoding: .utf8) ?? ""
             Task { @MainActor [weak self] in
-                self?.processOutputText(id: id, text: text)
+                guard let self else { return }
+                self.taskOutput[id] = (self.taskOutput[id] ?? "") + text
+                self.processOutputText(id: id, text: text)
             }
         }
 
@@ -157,9 +162,10 @@ final class DownloadService: ObservableObject {
             }
         }
 
-        stdoutHandle.readabilityHandler = nil
+        outputHandle.readabilityHandler = nil
         activeProcesses.removeValue(forKey: id)
         progressHistory.removeValue(forKey: id)
+        let collectedOutput = taskOutput.removeValue(forKey: id) ?? ""
 
         if exitCode == 0 {
             updateState(id, .verifying)
@@ -171,14 +177,18 @@ final class DownloadService: ObservableObject {
                 logInfo("Download verified: \(title) \(version)", category: "DownloadService")
             }
         } else {
-            let errData = stderrPipe.fileHandleForReading.readDataToEndOfFile()
-            let errMsg = String(data: errData, encoding: .utf8)?
-                .trimmingCharacters(in: .whitespacesAndNewlines) ?? "Unknown error (exit \(exitCode))"
+            // Use last non-empty line from collected output as the error message
+            let errMsg = collectedOutput
+                .components(separatedBy: CharacterSet.newlines.union(CharacterSet(charactersIn: "\r")))
+                .map { $0.trimmingCharacters(in: .whitespaces) }
+                .filter { !$0.isEmpty }
+                .last ?? "Unknown error (exit \(exitCode))"
+
             logError("Download failed (exit \(exitCode)): \(errMsg)", category: "DownloadService")
 
-            let isPermissionError = errMsg.lowercased().contains("requires") ||
-                errMsg.lowercased().contains("permission") ||
-                errMsg.lowercased().contains("authorization") ||
+            let isPermissionError = collectedOutput.lowercased().contains("requires") ||
+                collectedOutput.lowercased().contains("permission") ||
+                collectedOutput.lowercased().contains("authorization") ||
                 exitCode == 1
             if isPermissionError {
                 updateState(id, .failed(error: DownloadError.elevationRequired.localizedDescription ?? errMsg))
@@ -211,15 +221,21 @@ final class DownloadService: ObservableObject {
     }
 
     private func processOutputText(id: UUID, text: String) {
-        for line in text.components(separatedBy: .newlines) {
-            if let progress = parseProgress(from: line) {
+        // softwareupdate uses both \n and \r (carriage return) for progress lines
+        let separators = CharacterSet.newlines.union(CharacterSet(charactersIn: "\r"))
+        for line in text.components(separatedBy: separators) {
+            let trimmed = line.trimmingCharacters(in: .whitespaces)
+            if let progress = parseProgress(from: trimmed) {
                 updateProgress(id: id, progress: progress)
+            } else if !trimmed.isEmpty {
+                logDebug(trimmed, category: "softwareupdate")
             }
         }
     }
 
     private func parseProgress(from line: String) -> Double? {
-        let pattern = /([0-9]+\.?[0-9]*)% complete/
+        // Matches: "Installing: 12.50% complete" / "Downloading: 5%" / "12.5%"
+        let pattern = /([0-9]+\.?[0-9]*)\s*%/
         guard let match = try? pattern.firstMatch(in: line),
               let value = Double(match.1) else { return nil }
         return min(value / 100.0, 1.0)
