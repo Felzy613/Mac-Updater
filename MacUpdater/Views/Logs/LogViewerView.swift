@@ -1,5 +1,6 @@
 import SwiftUI
 import AppKit
+import UniformTypeIdentifiers
 
 struct LogViewerView: View {
     @EnvironmentObject private var logVM: LogViewerViewModel

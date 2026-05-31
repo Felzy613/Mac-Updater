@@ -1,4 +1,5 @@
 import Foundation
+import Combine
 
 enum DownloadError: LocalizedError, Sendable {
     case elevationRequired
