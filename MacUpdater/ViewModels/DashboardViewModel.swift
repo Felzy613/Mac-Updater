@@ -22,9 +22,8 @@ final class DashboardViewModel: ObservableObject {
         error = nil
         Task {
             do {
-                async let info = systemInfoService.detect()
-                async let count = { try installedService.scanInstalledInstallers().count }()
-                let (si, ic) = try await (info, count)
+                let si = try await systemInfoService.detect()
+                let ic = try await installedService.scanInstalledInstallers().count
                 systemInfo = si
                 installedCount = ic
                 logInfo("System info: \(si.productVersion) (\(si.buildVersion)) \(si.architecture)", category: "Dashboard")

@@ -26,7 +26,7 @@ enum AllowedCommand: Sendable {
     case listFullInstallers
     case fetchFullInstaller(version: String)
 
-    private static let versionPattern = /^[0-9]+\.[0-9]+(\.[0-9]+)?$/
+    nonisolated(unsafe) private static let versionPattern = /^[0-9]+\.[0-9]+(\.[0-9]+)?$/
 
     var executableURL: URL {
         switch self {

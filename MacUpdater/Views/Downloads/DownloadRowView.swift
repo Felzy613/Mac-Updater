@@ -62,12 +62,12 @@ struct DownloadRowView: View {
                 }
                 if let started = task.startedAt {
                     Spacer()
-                    Text(started, style: .relative)
-                        .font(.caption)
-                        .foregroundStyle(.tertiary)
-                    + Text(" ago")
-                        .font(.caption)
-                        .foregroundStyle(.tertiary)
+                    HStack(spacing: 2) {
+                        Text(started, style: .relative)
+                        Text("ago")
+                    }
+                    .font(.caption)
+                    .foregroundStyle(.tertiary)
                 }
             }
         }
