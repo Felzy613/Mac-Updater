@@ -1,0 +1,34 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Xcode
+*.xcuserstate
+xcuserdata/
+DerivedData/
+*.xcworkspace
+!MacUpdater.xcodeproj/project.xcworkspace
+*.moved-aside
+*.xccheckout
+*.xcscmblueprint
+
+# Build products
+build/
+*.o
+*.d
+
+# Swift Package Manager (if ever used alongside)
+.build/
+.swiftpm/
+
+# Environment
+.env
+.env.*
+
+# Editors
+.idea/
+.vscode/
+
+# Logs generated at runtime
+*.log

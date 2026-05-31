@@ -1,0 +1,3 @@
+#!/bin/bash
+# Mac Updater is a standard GUI application — no LaunchAgent setup required.
+exit 0
