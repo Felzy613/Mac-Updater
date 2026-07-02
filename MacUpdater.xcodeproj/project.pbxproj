@@ -8,12 +8,18 @@
 
 /* Begin PBXFileReference section */
 		DA4B8C2E3F1A09D56E7F8C05 /* MacUpdater.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MacUpdater.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		EE4B8C2E3F1A09D56E7F8C01 /* MacUpdater Helper.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "MacUpdater Helper.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		DA4B8C2E3F1A09D56E7F8C04 /* MacUpdater */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = MacUpdater;
+			sourceTree = "<group>";
+		};
+		EE4B8C2E3F1A09D56E7F8C02 /* MacUpdaterHelper */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = MacUpdaterHelper;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -26,13 +32,39 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		EE4B8C2E3F1A09D56E7F8C03 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		EE4B8C2E3F1A09D56E7F8C0A /* Embed Login Items */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "Contents/Library/LoginItems";
+			dstSubfolderSpec = 1;
+			files = (
+				EE4B8C2E3F1A09D56E7F8C10 /* MacUpdater Helper.app in Embed Login Items */,
+			);
+			name = "Embed Login Items";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXBuildFile section */
+		EE4B8C2E3F1A09D56E7F8C10 /* MacUpdater Helper.app in Embed Login Items */ = {isa = PBXBuildFile; fileRef = EE4B8C2E3F1A09D56E7F8C01 /* MacUpdater Helper.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
 
 /* Begin PBXGroup section */
 		DA4B8C2E3F1A09D56E7F8C02 = {
 			isa = PBXGroup;
 			children = (
 				DA4B8C2E3F1A09D56E7F8C04 /* MacUpdater */,
+				EE4B8C2E3F1A09D56E7F8C02 /* MacUpdaterHelper */,
 				DA4B8C2E3F1A09D56E7F8C03 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -41,6 +73,7 @@
 			isa = PBXGroup;
 			children = (
 				DA4B8C2E3F1A09D56E7F8C05 /* MacUpdater.app */,
+				EE4B8C2E3F1A09D56E7F8C01 /* MacUpdater Helper.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -55,19 +88,45 @@
 				DA4B8C2E3F1A09D56E7F8C07 /* Sources */,
 				DA4B8C2E3F1A09D56E7F8C08 /* Frameworks */,
 				DA4B8C2E3F1A09D56E7F8C09 /* Resources */,
+				EE4B8C2E3F1A09D56E7F8C0A /* Embed Login Items */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				EE4B8C2E3F1A09D56E7F8C0C /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				DA4B8C2E3F1A09D56E7F8C04 /* MacUpdater */,
 			);
 			name = MacUpdater;
 			packageProductDependencies = (
+				EE4B8C2E3F1A09D56E7F8C0E /* MacUpdaterCore */,
 			);
 			productName = MacUpdater;
 			productReference = DA4B8C2E3F1A09D56E7F8C05 /* MacUpdater.app */;
+			productType = "com.apple.product-type.application";
+		};
+		EE4B8C2E3F1A09D56E7F8C06 /* MacUpdater Helper */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = EE4B8C2E3F1A09D56E7F8C09 /* Build configuration list for PBXNativeTarget "MacUpdater Helper" */;
+			buildPhases = (
+				EE4B8C2E3F1A09D56E7F8C04 /* Sources */,
+				EE4B8C2E3F1A09D56E7F8C03 /* Frameworks */,
+				EE4B8C2E3F1A09D56E7F8C05 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				EE4B8C2E3F1A09D56E7F8C02 /* MacUpdaterHelper */,
+			);
+			name = "MacUpdater Helper";
+			packageProductDependencies = (
+				EE4B8C2E3F1A09D56E7F8C0F /* MacUpdaterCore */,
+			);
+			productName = "MacUpdater Helper";
+			productReference = EE4B8C2E3F1A09D56E7F8C01 /* MacUpdater Helper.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -83,6 +142,9 @@
 					DA4B8C2E3F1A09D56E7F8C06 = {
 						CreatedOnToolsVersion = 26.2;
 					};
+					EE4B8C2E3F1A09D56E7F8C06 = {
+						CreatedOnToolsVersion = 26.2;
+					};
 				};
 			};
 			buildConfigurationList = DA4B8C2E3F1A09D56E7F8C0A /* Build configuration list for PBXProject "MacUpdater" */;
@@ -94,18 +156,67 @@
 			);
 			mainGroup = DA4B8C2E3F1A09D56E7F8C02;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				EE4B8C2E3F1A09D56E7F8C0D /* XCLocalSwiftPackageReference "Packages/MacUpdaterCore" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = DA4B8C2E3F1A09D56E7F8C03 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
 				DA4B8C2E3F1A09D56E7F8C06 /* MacUpdater */,
+				EE4B8C2E3F1A09D56E7F8C06 /* MacUpdater Helper */,
 			);
 		};
 /* End PBXProject section */
 
+/* Begin PBXContainerItemProxy section */
+		EE4B8C2E3F1A09D56E7F8C0B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DA4B8C2E3F1A09D56E7F8C01 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = EE4B8C2E3F1A09D56E7F8C06;
+			remoteInfo = "MacUpdater Helper";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXTargetDependency section */
+		EE4B8C2E3F1A09D56E7F8C0C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = EE4B8C2E3F1A09D56E7F8C06 /* MacUpdater Helper */;
+			targetProxy = EE4B8C2E3F1A09D56E7F8C0B /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		EE4B8C2E3F1A09D56E7F8C0D /* XCLocalSwiftPackageReference "Packages/MacUpdaterCore" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = "Packages/MacUpdaterCore";
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		EE4B8C2E3F1A09D56E7F8C0E /* MacUpdaterCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EE4B8C2E3F1A09D56E7F8C0D /* XCLocalSwiftPackageReference "Packages/MacUpdaterCore" */;
+			productName = MacUpdaterCore;
+		};
+		EE4B8C2E3F1A09D56E7F8C0F /* MacUpdaterCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EE4B8C2E3F1A09D56E7F8C0D /* XCLocalSwiftPackageReference "Packages/MacUpdaterCore" */;
+			productName = MacUpdaterCore;
+		};
+/* End XCSwiftPackageProductDependency section */
+
 /* Begin PBXResourcesBuildPhase section */
 		DA4B8C2E3F1A09D56E7F8C09 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EE4B8C2E3F1A09D56E7F8C05 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -116,6 +227,13 @@
 
 /* Begin PBXSourcesBuildPhase section */
 		DA4B8C2E3F1A09D56E7F8C07 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EE4B8C2E3F1A09D56E7F8C04 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -305,6 +423,62 @@
 			};
 			name = Release;
 		};
+		EE4B8C2E3F1A09D56E7F8C07 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = MacUpdaterHelper/MacUpdaterHelper.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 3;
+				DEVELOPMENT_TEAM = J97QDPV6YC;
+				ENABLE_APP_SANDBOX = NO;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Mac Updater";
+				INFOPLIST_KEY_LSUIElement = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = FelzyTech.MacUpdater.Helper;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+		EE4B8C2E3F1A09D56E7F8C08 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = MacUpdaterHelper/MacUpdaterHelper.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 3;
+				DEVELOPMENT_TEAM = J97QDPV6YC;
+				ENABLE_APP_SANDBOX = NO;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Mac Updater";
+				INFOPLIST_KEY_LSUIElement = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = FelzyTech.MacUpdater.Helper;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -322,6 +496,15 @@
 			buildConfigurations = (
 				DA4B8C2E3F1A09D56E7F8C0E /* Debug */,
 				DA4B8C2E3F1A09D56E7F8C0F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		EE4B8C2E3F1A09D56E7F8C09 /* Build configuration list for PBXNativeTarget "MacUpdater Helper" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EE4B8C2E3F1A09D56E7F8C07 /* Debug */,
+				EE4B8C2E3F1A09D56E7F8C08 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

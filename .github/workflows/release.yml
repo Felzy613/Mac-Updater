@@ -126,6 +126,18 @@ jobs:
               -maxdepth 1 -name "*.app" -exec cp -r {} "$RUNNER_TEMP/export/" \;
           fi
 
+      # ── 5b. Verify the background helper got embedded ────────────────────────
+      - name: Verify embedded helper
+        run: |
+          APP_PATH=$(find "$RUNNER_TEMP/export" -maxdepth 1 -name "*.app" | head -1)
+          HELPER_PATH="$APP_PATH/Contents/Library/LoginItems/MacUpdater Helper.app"
+
+          if [ ! -d "$HELPER_PATH" ]; then
+            echo "::error::Background helper not found at $HELPER_PATH — the Copy Files build phase may be broken"
+            exit 1
+          fi
+          echo "Helper embedded: $HELPER_PATH"
+
       # ── 6. Build .pkg installer ───────────────────────────────────────────────
       - name: Build .pkg
         id: pkg

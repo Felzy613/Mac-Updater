@@ -1,4 +1,5 @@
 import SwiftUI
+import MacUpdaterCore
 
 struct InstalledInstallersView: View {
     @EnvironmentObject private var installedVM: InstalledInstallersViewModel

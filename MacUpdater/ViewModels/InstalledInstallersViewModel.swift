@@ -1,6 +1,7 @@
 import Foundation
 import Combine
 import AppKit
+import MacUpdaterCore
 
 @MainActor
 final class InstalledInstallersViewModel: ObservableObject {

@@ -1,4 +1,5 @@
 import SwiftUI
+import MacUpdaterCore
 
 struct DashboardView: View {
     @EnvironmentObject private var dashboardVM: DashboardViewModel

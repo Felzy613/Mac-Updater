@@ -1,5 +1,6 @@
 import Foundation
 import Combine
+import MacUpdaterCore
 
 enum DownloadError: LocalizedError, Sendable {
     case elevationRequired

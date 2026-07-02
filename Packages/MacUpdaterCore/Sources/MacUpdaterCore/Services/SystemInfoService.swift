@@ -1,13 +1,13 @@
 import Foundation
 
-actor SystemInfoService {
+public actor SystemInfoService {
     private let shell: ShellService
 
-    init(shell: ShellService) {
+    public init(shell: ShellService) {
         self.shell = shell
     }
 
-    func detect() async throws -> SystemInfo {
+    public func detect() async throws -> SystemInfo {
         async let swVersOutput = shell.run(.swVers)
         async let archOutput = shell.run(.uname(flag: "-m"))
 

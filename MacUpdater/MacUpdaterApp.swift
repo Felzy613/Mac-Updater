@@ -1,4 +1,5 @@
 import SwiftUI
+import MacUpdaterCore
 
 @main
 struct MacUpdaterApp: App {
@@ -34,7 +35,7 @@ struct MacUpdaterApp: App {
         _dashboardVM = StateObject(wrappedValue:
             DashboardViewModel(systemInfoService: sysInfo, installedService: installed))
         _installerListVM = StateObject(wrappedValue:
-            InstallerListViewModel(discoveryService: discovery, systemInfoService: sysInfo))
+            InstallerListViewModel(discoveryService: discovery, systemInfoService: sysInfo, notificationService: notif))
         _downloadVM = StateObject(wrappedValue:
             DownloadManagerViewModel(downloadService: download, notificationService: notif))
         _installedVM = StateObject(wrappedValue:
@@ -42,7 +43,7 @@ struct MacUpdaterApp: App {
     }
 
     var body: some Scene {
-        WindowGroup {
+        WindowGroup(id: "main") {
             MainView()
                 .environmentObject(settingsVM)
                 .environmentObject(dashboardVM)

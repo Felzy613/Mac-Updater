@@ -1,4 +1,5 @@
 import SwiftUI
+import MacUpdaterCore
 
 struct InstalledInstallerRowView: View {
     let installer: InstalledInstaller

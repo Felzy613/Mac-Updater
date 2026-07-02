@@ -1,5 +1,6 @@
 import Foundation
 import Combine
+import MacUpdaterCore
 
 @MainActor
 final class DashboardViewModel: ObservableObject {

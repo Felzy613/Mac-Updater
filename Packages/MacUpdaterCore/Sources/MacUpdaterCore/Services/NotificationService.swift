@@ -2,10 +2,12 @@ import Foundation
 import UserNotifications
 
 @MainActor
-final class NotificationService {
+public final class NotificationService {
     private var isAuthorized = false
 
-    func requestAuthorization() async {
+    public init() {}
+
+    public func requestAuthorization() async {
         do {
             let granted = try await UNUserNotificationCenter.current()
                 .requestAuthorization(options: [.alert, .sound, .badge])
@@ -16,7 +18,7 @@ final class NotificationService {
         }
     }
 
-    func sendDownloadStarted(title: String, version: String) {
+    public func sendDownloadStarted(title: String, version: String) {
         send(
             id: "download-start-\(version)",
             title: "Download Started",
@@ -24,7 +26,7 @@ final class NotificationService {
         )
     }
 
-    func sendDownloadCompleted(title: String, version: String) {
+    public func sendDownloadCompleted(title: String, version: String) {
         send(
             id: "download-complete-\(version)",
             title: "Download Complete",
@@ -32,7 +34,7 @@ final class NotificationService {
         )
     }
 
-    func sendDownloadFailed(title: String, version: String, error: String) {
+    public func sendDownloadFailed(title: String, version: String, error: String) {
         send(
             id: "download-failed-\(version)",
             title: "Download Failed",
@@ -40,7 +42,7 @@ final class NotificationService {
         )
     }
 
-    func sendInstallerDetected(title: String, version: String) {
+    public func sendInstallerDetected(title: String, version: String) {
         send(
             id: "installer-detected-\(version)",
             title: "Installer Detected",
@@ -48,8 +50,16 @@ final class NotificationService {
         )
     }
 
+    public func sendUpdateAvailable(title: String, version: String) {
+        send(
+            id: "update-available-\(version)",
+            title: "macOS Update Available",
+            body: "\(title) \(version) is available to download."
+        )
+    }
+
     private func send(id: String, title: String, body: String) {
-        guard isAuthorized else { return }
+        guard isAuthorized, SharedState.loadSettings().notificationsEnabled else { return }
         let content = UNMutableNotificationContent()
         content.title = title
         content.body = body

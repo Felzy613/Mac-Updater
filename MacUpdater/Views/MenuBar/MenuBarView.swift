@@ -3,6 +3,7 @@ import SwiftUI
 struct MenuBarView: View {
     @EnvironmentObject private var downloadVM: DownloadManagerViewModel
     @EnvironmentObject private var installerListVM: InstallerListViewModel
+    @Environment(\.openWindow) private var openWindow
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -59,7 +60,7 @@ struct MenuBarView: View {
         HStack {
             Button("Open Mac Updater") {
                 NSApplication.shared.activate(ignoringOtherApps: true)
-                NSApplication.shared.windows.first?.makeKeyAndOrderFront(nil)
+                openWindow(id: "main")
             }
             .buttonStyle(.plain)
             .font(.subheadline)

@@ -1,7 +1,7 @@
 import Foundation
 
-actor LoggingService {
-    static let shared = LoggingService()
+public actor LoggingService {
+    public static let shared = LoggingService()
 
     private var entries: [AppLog] = []
     private var logFileURL: URL?
@@ -9,12 +9,12 @@ actor LoggingService {
     private let encoder = JSONEncoder()
     private let maxEntries = 2000
 
-    init() {
+    public init() {
         encoder.dateEncodingStrategy = .iso8601
         Task { await self.setupPersistence() }
     }
 
-    func log(_ level: LogLevel, category: String, _ message: String) {
+    public func log(_ level: LogLevel, category: String, _ message: String) {
         let entry = AppLog(id: UUID(), timestamp: Date(), level: level, category: category, message: message)
         entries.append(entry)
         if entries.count > maxEntries { entries.removeFirst(entries.count - maxEntries) }
@@ -26,7 +26,7 @@ actor LoggingService {
         #endif
     }
 
-    func getEntries(level: LogLevel? = nil, category: String? = nil, search: String = "") -> [AppLog] {
+    public func getEntries(level: LogLevel? = nil, category: String? = nil, search: String = "") -> [AppLog] {
         entries.filter { entry in
             if let level, entry.level < level { return false }
             if let category, entry.category != category { return false }
@@ -38,14 +38,14 @@ actor LoggingService {
         }
     }
 
-    func exportAsText() -> String {
+    public func exportAsText() -> String {
         entries.map { e in
             let ts = e.formattedTimestamp
             return "[\(ts)] [\(e.level.label.uppercased())] [\(e.category)] \(e.message)"
         }.joined(separator: "\n")
     }
 
-    func clearAll() {
+    public func clearAll() {
         entries.removeAll()
         if let url = logFileURL {
             try? FileManager.default.removeItem(at: url)
@@ -54,7 +54,7 @@ actor LoggingService {
         }
     }
 
-    func clearOldEntries(retentionDays: Int) {
+    public func clearOldEntries(retentionDays: Int) {
         let cutoff = Date().addingTimeInterval(-Double(retentionDays) * 86400)
         entries.removeAll { $0.timestamp < cutoff }
     }
@@ -95,18 +95,18 @@ actor LoggingService {
     }
 }
 
-func logDebug(_ message: String, category: String = "App") {
+public func logDebug(_ message: String, category: String = "App") {
     Task { await LoggingService.shared.log(.debug, category: category, message) }
 }
 
-func logInfo(_ message: String, category: String = "App") {
+public func logInfo(_ message: String, category: String = "App") {
     Task { await LoggingService.shared.log(.info, category: category, message) }
 }
 
-func logWarning(_ message: String, category: String = "App") {
+public func logWarning(_ message: String, category: String = "App") {
     Task { await LoggingService.shared.log(.warning, category: category, message) }
 }
 
-func logError(_ message: String, category: String = "App") {
+public func logError(_ message: String, category: String = "App") {
     Task { await LoggingService.shared.log(.error, category: category, message) }
 }

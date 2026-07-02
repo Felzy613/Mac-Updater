@@ -22,6 +22,12 @@ struct SettingsView: View {
 
     private var generalTab: some View {
         Form {
+            Section("Startup") {
+                Toggle("Launch at login", isOn: $settingsVM.launchAtLogin)
+                Text("A small background helper checks for updates automatically and notifies you when one is found — the main app doesn't need to stay open.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
             Section("Update Checking") {
                 Toggle("Auto-refresh installer list", isOn: $settingsVM.autoRefresh)
                 Picker("Refresh interval", selection: $settingsVM.refreshInterval) {

@@ -1,5 +1,6 @@
 import Foundation
 import Combine
+import MacUpdaterCore
 
 @MainActor
 final class InstallerListViewModel: ObservableObject {
@@ -16,13 +17,19 @@ final class InstallerListViewModel: ObservableObject {
 
     private let discoveryService: InstallerDiscoveryService
     private let systemInfoService: SystemInfoService
+    private let notificationService: NotificationService
     private var systemInfo: SystemInfo?
     private var refreshTimer: AnyCancellable?
     private var settingsCancellable: AnyCancellable?
 
-    init(discoveryService: InstallerDiscoveryService, systemInfoService: SystemInfoService) {
+    init(
+        discoveryService: InstallerDiscoveryService,
+        systemInfoService: SystemInfoService,
+        notificationService: NotificationService
+    ) {
         self.discoveryService = discoveryService
         self.systemInfoService = systemInfoService
+        self.notificationService = notificationService
     }
 
     func refresh() {
@@ -37,17 +44,15 @@ final class InstallerListViewModel: ObservableObject {
                 let (si, raw) = try await (info, discovered)
 
                 systemInfo = si
-                let currentVersion = si.versionNumber
-                let tagged = raw.map { installer -> MacOSInstaller in
-                    var i = installer
-                    i.isDowngrade = i.versionNumber <= currentVersion
-                    return i
-                }
-                .sorted { $0.versionNumber > $1.versionNumber }
+                let known = Set(SharedState.loadKnownUpgrades().notifiedVersions)
+                let (tagged, newlyAvailable) = diffNewUpgrades(
+                    installers: raw, currentVersion: si.versionNumber, knownVersions: known
+                )
 
-                installers = tagged
+                installers = tagged.sorted { $0.versionNumber > $1.versionNumber }
                 lastRefreshed = Date()
                 applyFilter()
+                notify(newlyAvailable: newlyAvailable, allUpgradeVersions: tagged.filter { !$0.isDowngrade }.map(\.version))
                 logInfo("Found \(raw.count) installers (\(upgradeCount) upgrades)", category: "InstallerList")
             } catch {
                 self.error = error.localizedDescription
@@ -67,6 +72,13 @@ final class InstallerListViewModel: ObservableObject {
     func stopAutoRefresh() {
         refreshTimer?.cancel()
         refreshTimer = nil
+    }
+
+    private func notify(newlyAvailable: [MacOSInstaller], allUpgradeVersions: [String]) {
+        if let newest = newlyAvailable.max(by: { $0.versionNumber < $1.versionNumber }) {
+            notificationService.sendUpdateAvailable(title: newest.title, version: newest.version)
+        }
+        SharedState.saveKnownUpgrades(KnownUpgrades(notifiedVersions: allUpgradeVersions))
     }
 
     private func applyFilter() {

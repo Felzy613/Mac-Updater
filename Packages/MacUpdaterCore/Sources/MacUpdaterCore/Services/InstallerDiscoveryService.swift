@@ -1,13 +1,13 @@
 import Foundation
 
-actor InstallerDiscoveryService {
+public actor InstallerDiscoveryService {
     private let shell: ShellService
 
-    init(shell: ShellService) {
+    public init(shell: ShellService) {
         self.shell = shell
     }
 
-    func fetchInstallers() async throws -> [MacOSInstaller] {
+    public func fetchInstallers() async throws -> [MacOSInstaller] {
         let output = try await shell.run(.listFullInstallers)
         return parseOutput(output)
     }
