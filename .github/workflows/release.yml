@@ -30,9 +30,12 @@ jobs:
       # ── 2. Bump version ───────────────────────────────────────────────────────
       - name: Bump version
         id: ver
+        # The message goes through the environment, never into the script text: a commit
+        # message containing a quote used to break the shell (and could inject commands).
+        env:
+          COMMIT_MSG: ${{ github.event.head_commit.message }}
         run: |
-          python3 .github/scripts/bump_version.py "${{ github.event.head_commit.message }}" \
-            >> "$GITHUB_OUTPUT"
+          python3 .github/scripts/bump_version.py "$COMMIT_MSG" >> "$GITHUB_OUTPUT"
 
       # ── 3. Import signing certificate ─────────────────────────────────────────
       - name: Set up signing
@@ -181,10 +184,12 @@ jobs:
 
       # ── 8. Create GitHub Release ─────────────────────────────────────────────
       - name: Write release notes
+        env:
+          COMMIT_MSG: ${{ github.event.head_commit.message }}
         run: |
-          printf '%s' "${{ github.event.head_commit.message }}" \
+          printf '%s' "$COMMIT_MSG" \
             | grep -v '\[skip ci\]' \
-            > "$RUNNER_TEMP/release_notes.md"
+            > "$RUNNER_TEMP/release_notes.md" || true
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
