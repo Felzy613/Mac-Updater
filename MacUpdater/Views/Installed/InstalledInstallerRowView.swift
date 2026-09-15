@@ -5,31 +5,25 @@ struct InstalledInstallerRowView: View {
     let installer: InstalledInstaller
     let currentVersion: VersionNumber?
     let onLaunch: () -> Void
-
-    private var sizeFormatted: String? {
-        guard let size = installer.sizeOnDisk else { return nil }
-        let gb = Double(size) / 1_000_000_000
-        if gb >= 1 { return String(format: "%.1f GB", gb) }
-        let mb = Double(size) / 1_000_000
-        return String(format: "%.0f MB", mb)
-    }
+    let onReveal: () -> Void
 
     var body: some View {
-        HStack(spacing: 12) {
-            Image(systemName: "externaldrive.badge.checkmark")
+        HStack(alignment: .top, spacing: 12) {
+            Image(systemName: installer.isComplete ? "externaldrive.badge.checkmark" : "externaldrive.badge.xmark")
                 .font(.title)
-                .foregroundStyle(.green)
+                .foregroundStyle(installer.isComplete ? .green : .orange)
                 .frame(width: 44)
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(installer.displayName)
                     .font(.headline)
+
                 HStack(spacing: 8) {
-                    Text("Version \(installer.version)")
+                    Text("macOS \(installer.macOSVersion)")
                     if !installer.build.isEmpty {
                         Text("Build \(installer.build)")
                     }
-                    if let size = sizeFormatted {
+                    if let size = installer.sizeFormatted {
                         Text(size)
                     }
                 }
@@ -37,9 +31,16 @@ struct InstalledInstallerRowView: View {
                 .foregroundStyle(.secondary)
 
                 if let modified = installer.dateModified {
-                    Text("Modified \(modified, style: .date)")
+                    Text("Downloaded \(modified, style: .date)")
                         .font(.caption)
                         .foregroundStyle(.tertiary)
+                }
+
+                if let issue = installer.issueDescription {
+                    Label(issue, systemImage: "exclamationmark.triangle.fill")
+                        .font(.caption)
+                        .foregroundStyle(.orange)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
             }
 
@@ -49,9 +50,14 @@ struct InstalledInstallerRowView: View {
                 Button("Open Installer", action: onLaunch)
                     .buttonStyle(.borderedProminent)
                     .controlSize(.small)
+                    .disabled(!installer.isComplete)
+
+                Button("Show in Finder", action: onReveal)
+                    .buttonStyle(.link)
+                    .font(.caption)
 
                 if let current = currentVersion, installer.versionNumber < current {
-                    Label("Older version", systemImage: "arrow.down")
+                    Label("Older than macOS \(current.description)", systemImage: "arrow.down")
                         .font(.caption)
                         .foregroundStyle(.orange)
                 }

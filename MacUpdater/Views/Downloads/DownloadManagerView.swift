@@ -21,14 +21,15 @@ struct DownloadManagerView: View {
         .navigationTitle("Downloads")
         .toolbar {
             ToolbarItem {
-                Button("Clear Completed") {
-                    downloadVM.clearCompleted()
+                Button("Clear Finished") {
+                    downloadVM.clearFinished()
                 }
-                .disabled(downloadVM.tasks.allSatisfy { $0.state.isActive })
+                .disabled(!downloadVM.hasFinishedTasks)
             }
         }
         .sheet(item: $downloadVM.pendingElevationTaskID) { taskID in
             ElevationSheet(taskID: taskID)
         }
+        .installerAlert($downloadVM.alert)
     }
 }

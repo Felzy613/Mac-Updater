@@ -29,6 +29,8 @@ enum AppSection: String, CaseIterable, Identifiable {
 struct MainView: View {
     @EnvironmentObject private var installerListVM: InstallerListViewModel
     @EnvironmentObject private var downloadVM: DownloadManagerViewModel
+    @EnvironmentObject private var installedVM: InstalledInstallersViewModel
+    @EnvironmentObject private var dashboardVM: DashboardViewModel
     @State private var selectedSection: AppSection? = .dashboard
 
     var body: some View {
@@ -45,6 +47,15 @@ struct MainView: View {
                 .navigationSplitViewColumnWidth(min: 500, ideal: 700)
         }
         .frame(minWidth: 720, minHeight: 500)
+        // A download that just finished changes both of these, so re-read them when the
+        // user actually looks rather than showing a stale scan.
+        .onChange(of: selectedSection) { section in
+            switch section {
+            case .installed: installedVM.refresh()
+            case .dashboard: dashboardVM.refresh()
+            default: break
+            }
+        }
     }
 
     @ViewBuilder

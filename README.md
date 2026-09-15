@@ -11,9 +11,11 @@ Mac Updater is a production-quality SwiftUI front-end for Apple's `softwareupdat
 - **System detection** — displays your current macOS version, build number, and chip architecture
 - **Installer discovery** — fetches the full list of available macOS installers from Apple
 - **Upgrade filtering** — only shows installers newer than your current OS by default
-- **Download management** — start, cancel, retry, and monitor download progress with speed and ETA
-- **Privilege escalation** — prompts for your administrator password via a native GUI sheet when required
-- **Installed installer browser** — scans `/Applications` and lists any macOS installer apps with version details and a one-click launch button
+- **Download management** — start, cancel, retry, and monitor download progress with speed and ETA; downloads run one at a time
+- **Disk-space pre-flight** — checks there is room for the download *and* its expansion before starting, and says how much to free up if not
+- **Readable failures** — `softwareupdate` errors are classified (disk space, permissions, network, eligibility) with a recovery hint and the raw output on demand
+- **Privilege escalation** — prompts for your administrator password when — and only when — the failure was actually about privileges
+- **Installed installer browser** — scans `/Applications`, shows the macOS version each installer actually carries, flags incomplete downloads, and launches them with real error reporting
 - **Log viewer** — structured log with levels, search, category filter, and plain-text export
 - **Native notifications** — notifies you when downloads start, complete, or fail
 - **Menu bar extra** — quick-access popover showing active download progress

@@ -19,6 +19,7 @@ struct DashboardView: View {
                         updatesCard
                         downloadsCard
                         installedCard
+                        storageCard
                     }
                     .padding()
                 }
@@ -107,6 +108,40 @@ struct DashboardView: View {
                 }
             }
         }
+    }
+
+    /// Free space is the single most common reason a download or an upgrade fails,
+    /// so it belongs on the front page rather than in an error message afterwards.
+    private var storageCard: some View {
+        DashboardCard(
+            symbol: "internaldrive",
+            title: "Free Space",
+            color: hasRoomToInstall ? .teal : .orange
+        ) {
+            VStack(alignment: .leading, spacing: 4) {
+                if let space = dashboardVM.diskSpace {
+                    Text(DiskSpace.formatted(space.availableCapacity))
+                        .font(.system(size: 30, weight: .bold, design: .rounded))
+                        .foregroundStyle(hasRoomToInstall ? .teal : .orange)
+                    Text("of \(DiskSpace.formatted(space.totalCapacity)) available")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                    if !hasRoomToInstall {
+                        Text("A macOS upgrade usually needs at least \(DiskSpace.formatted(InstallerBundleInfo.recommendedFreeSpaceForInstall)).")
+                            .font(.caption)
+                            .foregroundStyle(.orange)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                } else {
+                    Text("Checking…").foregroundStyle(.secondary)
+                }
+            }
+        }
+    }
+
+    private var hasRoomToInstall: Bool {
+        guard let space = dashboardVM.diskSpace else { return true }
+        return space.availableCapacity >= InstallerBundleInfo.recommendedFreeSpaceForInstall
     }
 
     private var installedCard: some View {

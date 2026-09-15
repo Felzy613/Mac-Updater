@@ -25,6 +25,10 @@ public enum AllowedCommand: Sendable {
     case uname(flag: String)
     case listFullInstallers
     case fetchFullInstaller(version: String)
+    /// The same fetch, wrapped in `osascript` so macOS shows its standard authorization
+    /// prompt. `do shell script` buffers output until the command finishes, so the
+    /// merged stdout+stderr comes back in one go (or inside the AppleScript error).
+    case elevatedFetchFullInstaller(version: String)
 
     nonisolated(unsafe) private static let versionPattern = /^[0-9]+\.[0-9]+(\.[0-9]+)?$/
 
@@ -33,6 +37,7 @@ public enum AllowedCommand: Sendable {
         case .swVers: return URL(fileURLWithPath: "/usr/bin/sw_vers")
         case .uname: return URL(fileURLWithPath: "/usr/bin/uname")
         case .listFullInstallers, .fetchFullInstaller: return URL(fileURLWithPath: "/usr/sbin/softwareupdate")
+        case .elevatedFetchFullInstaller: return URL(fileURLWithPath: "/usr/bin/osascript")
         }
     }
 
@@ -42,6 +47,15 @@ public enum AllowedCommand: Sendable {
         case .uname(let flag): return [flag]
         case .listFullInstallers: return ["--list-full-installers"]
         case .fetchFullInstaller(let version): return ["--fetch-full-installer", "--full-installer-version", version]
+        case .elevatedFetchFullInstaller(let version):
+            let inner = "/usr/sbin/softwareupdate --fetch-full-installer --full-installer-version \(version) 2>&1"
+            // A full installer takes far longer than AppleScript's default timeout.
+            let script = """
+            with timeout of 86400 seconds
+                do shell script "\(inner)" with administrator privileges
+            end timeout
+            """
+            return ["-e", script]
         }
     }
 
@@ -50,6 +64,13 @@ public enum AllowedCommand: Sendable {
             throw ShellError.invalidVersion(version)
         }
         return .fetchFullInstaller(version: version)
+    }
+
+    public static func makeElevatedFetchFullInstaller(version: String) throws -> AllowedCommand {
+        guard (try? versionPattern.wholeMatch(in: version)) != nil else {
+            throw ShellError.invalidVersion(version)
+        }
+        return .elevatedFetchFullInstaller(version: version)
     }
 }
 

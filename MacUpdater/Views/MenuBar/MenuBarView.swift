@@ -89,7 +89,13 @@ struct MenuBarDownloadRow: View {
                 Spacer()
                 stateIndicator
             }
-            if case .downloading(let progress) = task.state {
+            if let failure = task.state.failure {
+                Text(failure.summary)
+                    .font(.caption2)
+                    .foregroundStyle(.red)
+                    .lineLimit(2)
+            }
+            if let progress = task.state.progress {
                 ProgressView(value: progress)
                     .controlSize(.mini)
                 HStack {
@@ -120,7 +126,7 @@ struct MenuBarDownloadRow: View {
             ProgressView().controlSize(.mini)
         case .verifying:
             Image(systemName: "magnifyingglass").foregroundStyle(.blue).font(.caption)
-        case .downloading:
+        case .downloading, .installing:
             EmptyView()
         }
     }

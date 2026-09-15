@@ -8,6 +8,7 @@ final class DashboardViewModel: ObservableObject {
     @Published private(set) var isLoading = false
     @Published private(set) var error: String?
     @Published private(set) var installedCount = 0
+    @Published private(set) var diskSpace: DiskSpace?
 
     private let systemInfoService: SystemInfoService
     private let installedService: InstalledInstallerService
@@ -27,6 +28,7 @@ final class DashboardViewModel: ObservableObject {
                 let ic = try await installedService.scanInstalledInstallers().count
                 systemInfo = si
                 installedCount = ic
+                diskSpace = DiskSpace.current()
                 logInfo("System info: \(si.productVersion) (\(si.buildVersion)) \(si.architecture)", category: "Dashboard")
             } catch {
                 self.error = error.localizedDescription
